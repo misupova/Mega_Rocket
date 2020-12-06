@@ -6,13 +6,15 @@ using UnityEngine;
 public class Rocket : MonoBehaviour
 {
     Rigidbody rigidBody;
-    AudioSource audio;
+    AudioSource audioSound;
+    [SerializeField] float rcsThrust = 30f;
+    [SerializeField] float mainThrust = 65f;
 
     // Start is called before the first frame update
     void Start()
     {
         rigidBody = GetComponent<Rigidbody>();
-        audio = GetComponent<AudioSource>();
+        audioSound = GetComponent<AudioSource>();
     }
 
     // Update is called once per frame
@@ -24,29 +26,34 @@ public class Rocket : MonoBehaviour
 
     private void Rotate()
     {
+        float rotationSpeed = rcsThrust * Time.deltaTime;
+        rigidBody.freezeRotation = true;
+
         if (Input.GetKey(KeyCode.A))
         {
-            transform.Rotate(Vector3.forward);
+            transform.Rotate(Vector3.forward * rotationSpeed);
         }
         else if (Input.GetKey(KeyCode.D))
         {
-            transform.Rotate(Vector3.back);
+            transform.Rotate(Vector3.back * rotationSpeed);
         }
+        rigidBody.freezeRotation = false;
     }
 
     private void Thrust()
     {
+        float thrustSpeed = mainThrust * Time.deltaTime;
         if (Input.GetKey(KeyCode.Space))
         {
-            rigidBody.AddRelativeForce(Vector3.up);
-            if (!audio.isPlaying)
+            rigidBody.AddRelativeForce(Vector3.up * thrustSpeed);
+            if (!audioSound.isPlaying)
             {
-                audio.Play();
+                audioSound.Play();
             }
         }
         else
         {
-            audio.Stop();
+            audioSound.Stop();
         }
     }
 }
